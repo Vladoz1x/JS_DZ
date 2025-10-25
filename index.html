@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Реєстрація</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #eef5ff;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+    form {
+      background: #dbe8f8;
+      padding: 20px;
+      border-radius: 10px;
+      width: 350px;
+    }
+    h3 {
+      background: #5783db;
+      color: white;
+      padding: 8px;
+      text-align: center;
+      border-radius: 5px;
+    }
+    label { display: block; margin-top: 10px; }
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 5px;
+      margin-top: 5px;
+    }
+    .btns {
+      text-align: center;
+      margin-top: 15px;
+    }
+    button {
+      margin: 5px;
+      padding: 6px 20px;
+    }
+  </style>
+</head>
+<body>
+  <form id="regForm">
+    <h3>Реєстрація на сервері</h3>
+    <label>Логін: <input type="text" name="login" required></label>
+    <label>Пароль: <input type="password" name="password" required></label>
+    <label>Підтвердження: <input type="password" name="confirm" required></label>
+    <label>Повне ім’я (ПІБ): <input type="text" name="fullname"></label>
+
+    <label>Стать:</label>
+    <label><input type="radio" name="gender" value="чоловіча"> чоловіча</label>
+    <label><input type="radio" name="gender" value="жіноча"> жіноча</label>
+
+    <label>Іноземні мови:</label>
+    <label><input type="checkbox" name="langs" value="англійська"> англійська</label>
+    <label><input type="checkbox" name="langs" value="німецька"> німецька</label>
+    <label><input type="checkbox" name="langs" value="французька"> французька</label>
+    <label><input type="checkbox" name="langs" value="іспанська"> іспанська</label>
+    <label><input type="checkbox" name="langs" value="італійська"> італійська</label>
+
+    <label>Сфера діяльності:
+      <select name="field">
+        <option value="освіта">освіта</option>
+        <option value="медицина">медицина</option>
+        <option value="ІТ">ІТ</option>
+        <option value="бізнес">бізнес</option>
+      </select>
+    </label>
+
+    <label>e-mail: <input type="email" name="email"></label>
+    <label>Додаткова інформація:
+      <textarea name="info" rows="3"></textarea>
+    </label>
+
+    <div class="btns">
+      <button type="button" id="saveBtn">Готово</button>
+      <button type="reset">Скинути</button>
+    </div>
+  </form>
+
+  <script>
+  function setCookie(name, value, days = 365) {
+    const d = new Date();
+    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${d.toUTCString()}; path=/`;
+  }
+
+  function getCookie(name) {
+    const cookies = document.cookie.split("; ");
+    for (let c of cookies) {
+      const [key, val] = c.split("=");
+      if (key === name) return decodeURIComponent(val);
+    }
+    return null;
+  }
+
+  const form = document.getElementById("regForm");
+
+  function saveData() {
+    const data = {
+      login: form.login.value,
+      password: form.password.value,
+      confirm: form.confirm.value,
+      fullname: form.fullname.value,
+      gender: form.querySelector('input[name="gender"]:checked')?.value || "",
+      langs: Array.from(form.querySelectorAll('input[name="langs"]:checked')).map(el => el.value),
+      field: form.field.value,
+      email: form.email.value,
+      info: form.info.value
+    };
+
+    if (data.password !== data.confirm) {
+      alert("Паролі не співпадають!");
+      return;
+    }
+
+    setCookie("userData", JSON.stringify(data));
+    alert("Дані збережено у cookie!");
+  }
+
+  function loadData() {
+    const saved = getCookie("userData");
+    if (!saved) return;
+    const data = JSON.parse(saved);
+
+    form.login.value = data.login || "";
+    form.password.value = data.password || "";
+    form.confirm.value = data.confirm || "";
+    form.fullname.value = data.fullname || "";
+    form.field.value = data.field || "";
+    form.email.value = data.email || "";
+    form.info.value = data.info || "";
+
+    if (data.gender) {
+      const g = form.querySelector(`input[name="gender"][value="${data.gender}"]`);
+      if (g) g.checked = true;
+    }
+
+    if (data.langs && data.langs.length) {
+      data.langs.forEach(l => {
+        const c = form.querySelector(`input[name="langs"][value="${l}"]`);
+        if (c) c.checked = true;
+      });
+    }
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", saveData);
+  window.addEventListener("DOMContentLoaded", loadData);
+</script>
+
+</body>
+</html>
