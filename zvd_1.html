@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Генератор рядка</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    body {
+      background: #f0f0f0;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #ccc;
+      width: 300px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    select, input[type="checkbox"], label, button {
+      display: block;
+      margin-top: 10px;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
+      background: #eee;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Генератор рядка</h2>
+
+    <label for="length">Довжина рядка:</label>
+    <select id="length">
+      <option value="2">2</option>
+      <option value="4">4</option>
+      <option value="6">6</option>
+      <option value="8">8</option>
+    </select>
+
+    <label><input type="checkbox" id="digits"> Цифри (0-9)</label>
+    <label><input type="checkbox" id="lower"> Маленькі літери (a-z)</label>
+    <label><input type="checkbox" id="upper"> Великі літери (A-Z)</label>
+    <label><input type="checkbox" id="special"> Спецсимволи (!@#$%^&*)</label>
+
+    <button id="generate">Згенерувати</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    $('#generate').click(function() {
+      let length = parseInt($('#length').val())
+      let chars = ''
+      if ($('#digits').is(':checked')) chars += '0123456789'
+      if ($('#lower').is(':checked')) chars += 'abcdefghijklmnopqrstuvwxyz'
+      if ($('#upper').is(':checked')) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      if ($('#special').is(':checked')) chars += '!@#$%^&*'
+
+      if (chars.length === 0) {
+        $('#result').text('Вибери хоча б один тип символів')
+        return
+      }
+
+      let result = ''
+      for (let i = 0; i < length; i++) {
+        let index = Math.floor(Math.random() * chars.length)
+        result += chars[index]
+      }
+
+      $('#result').text(result)
+    })
+  </script>
+</body>
+</html>
