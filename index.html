@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>ExtendedDate</title>
+</head>
+<body>
+  <script>
+    class ExtendedDate extends Date {
+      getTextDate() {
+        const months = [
+          "січня", "лютого", "березня", "квітня", "травня", "червня",
+          "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"
+        ];
+        return `${this.getDate()} ${months[this.getMonth()]} ${this.getFullYear()} р.`;
+      }
+
+      isFuture() {
+        const now = new Date();
+        return this >= now;
+      }
+
+      isLeapYear() {
+        const year = this.getFullYear();
+        return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+      }
+
+      getNextDate() {
+        const next = new Date(this);
+        next.setDate(this.getDate() + 1);
+        return new ExtendedDate(next);
+      }
+    }
+
+    const date = new ExtendedDate(2025, 9, 25);
+
+    document.write(`<p>Дата текстом: ${date.getTextDate()}</p>`);
+    document.write(`<p>Майбутня або сьогоднішня: ${date.isFuture()}</p>`);
+    document.write(`<p>Високосний рік: ${date.isLeapYear()}</p>`);
+    document.write(`<p>Наступна дата: ${date.getNextDate().getTextDate()}</p>`);
+  </script>
+</body>
+</html>
