@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Конструктор списку</title>
+    <style>
+        ul { list-style-type: disc; margin-left: 20px; }
+        li { cursor: pointer; margin: 3px 0; }
+    </style>
+</head>
+<body>
+
+<h2>Конструктор списку</h2>
+
+<div>
+    <input type="radio" name="action" value="addEnd"> Додати елемент у кінець списку
+    <input type="radio" name="action" value="insert"> Вставити елемент списку
+    <input type="radio" name="action" value="edit"> Змінити текст елемента
+    <input type="radio" name="action" value="addSub"> Додати вкладений список
+    <input type="radio" name="action" value="delete"> Видалити елемент списку<br><br>
+    <input type="text" id="text" placeholder="Текст елемента"><br><br>
+
+    <button id="createList">Додати новий список</button>
+</div>
+
+<div id="listContainer"></div>
+
+<script>
+let selectedAction = '';
+let inputText = document.getElementById('text');
+let listContainer = document.getElementById('listContainer');
+
+document.querySelectorAll('input[name="action"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        selectedAction = radio.value;
+    });
+});
+
+document.getElementById('createList').addEventListener('click', () => {
+    let ul = document.createElement('ul');
+    let li = document.createElement('li');
+    li.textContent = 'Новий елемент';
+    ul.appendChild(li);
+    listContainer.appendChild(ul);
+    attachClick(li);
+});
+
+function attachClick(li) {
+    li.addEventListener('click', (e) => {
+        e.stopPropagation();
+        let text = inputText.value.trim();
+        switch(selectedAction) {
+            case 'addEnd':
+                if (text === '') return;
+                let newLi = document.createElement('li');
+                newLi.textContent = text;
+                li.parentElement.appendChild(newLi);
+                attachClick(newLi);
+                break;
+            case 'insert':
+                if (text === '') return;
+                let insertLi = document.createElement('li');
+                insertLi.textContent = text;
+                li.parentElement.insertBefore(insertLi, li);
+                attachClick(insertLi);
+                break;
+            case 'edit':
+                if (text === '') return;
+                li.textContent = text;
+                attachClick(li);
+                break;
+            case 'addSub':
+                if (text === '') return;
+                if (li.querySelector('ul')) {
+                    alert('Вже є вкладений список!');
+                    return;
+                }
+                let subUl = document.createElement('ul');
+                let subLi = document.createElement('li');
+                subLi.textContent = text;
+                subUl.appendChild(subLi);
+                li.appendChild(subUl);
+                attachClick(subLi);
+                break;
+            case 'delete':
+                li.remove();
+                break;
+        }
+    });
+}
+</script>
+
+</body>
+</html>
