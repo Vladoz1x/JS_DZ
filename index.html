@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Система тестування</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    body { font-family: Arial; background: #1e1e1e; color: #fff; padding: 20px; }
+    .question-box { margin-bottom: 20px; }
+    .answers label { display: block; margin: 5px 0; cursor: pointer; }
+    button { padding: 10px 20px; background: #007acc; color: #fff; border: none; cursor: pointer; }
+    #timer { font-size: 18px; margin-bottom: 10px; color: #ff5252; }
+  </style>
+</head>
+<body>
+  <h1>Тестування</h1>
+  <input type="text" id="username" placeholder="Введіть ім’я" style="padding:5px; margin-bottom:10px;"><br>
+  <div id="timer"></div>
+  <div id="test-container"></div>
+  <button id="next" style="display:none;">Далі</button>
+
+  <script>
+    let questions = []
+    let current = 0
+    let score = 0
+    let timerId = null
+    let timeLeft = 10
+
+    function showQuestion(index) {
+      $("#test-container").empty()
+      $("#next").hide()
+      timeLeft = 10
+      updateTimer()
+      timerId = setInterval(() => {
+        timeLeft--
+        updateTimer()
+        if (timeLeft <= 0) {
+          clearInterval(timerId)
+          $("#next").show()
+        }
+      }, 1000)
+
+      const q = questions[index]
+      const box = $("<div>").addClass("question-box")
+      box.append(`<p><b>Питання ${index + 1}:</b> ${q.text}</p>`)
+      const answers = $("<div>").addClass("answers")
+      $.each(q.options, function(j, opt) {
+        answers.append(`<label><input type="radio" name="q" value="${j}"> ${opt}</label>`)
+      })
+      box.append(answers)
+      $("#test-container").append(box)
+    }
+
+    function updateTimer() {
+      $("#timer").text(`Залишилось: ${timeLeft} секунд`)
+    }
+
+    function finishTest() {
+      const name = $("#username").val() || "Користувач"
+      alert(`Поздравляем, ${name}! Тест сдан на ${score} балл.`)
+    }
+
+    $.getJSON("questions.json", function(data) {
+      questions = data
+      showQuestion(current)
+    })
+
+    $("#next").click(function() {
+      clearInterval(timerId)
+      const selected = $('input[name="q"]:checked').val()
+      if (selected !== undefined && parseInt(selected) === questions[current].correct) score++
+      current++
+      if (current < questions.length) {
+        showQuestion(current)
+      } else {
+        finishTest()
+      }
+    })
+
+    $(document).on("change", 'input[name="q"]', function() {
+      clearInterval(timerId)
+      $("#next").show()
+    })
+  </script>
+</body>
+</html>
