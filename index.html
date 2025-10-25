@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Маркер</title>
+</head>
+<body>
+  <script>
+
+    function Marker(color, inkAmount) {
+      this.color = color;
+      this.inkAmount = inkAmount; 
+    }
+
+
+    Marker.prototype.print = function(text) {
+      let printedText = "";
+      for (let i = 0; i < text.length; i++) {
+        if (this.inkAmount <= 0) {
+          break;
+        }
+        let char = text[i];
+        if (char !== " ") {
+          this.inkAmount -= 0.5;
+        }
+        if (this.inkAmount < 0) {
+          this.inkAmount = 0;
+        }
+        printedText += char;
+      }
+      document.write(`<p style="color: ${this.color}">${printedText}</p>`);
+      document.write(`<p>Залишилось чорнила: ${this.inkAmount.toFixed(1)}%</p>`);
+    };
+
+
+    function RefillableMarker(color, inkAmount) {
+      Marker.call(this, color, inkAmount);
+    }
+
+
+    RefillableMarker.prototype = Object.create(Marker.prototype);
+    RefillableMarker.prototype.constructor = RefillableMarker;
+
+
+    RefillableMarker.prototype.refill = function() {
+      this.inkAmount = 100;
+      document.write(`<p style="color: green">Маркер заправлено до 100%</p>`);
+    };
+
+
+    let simpleMarker = new Marker("blue", 10);
+    simpleMarker.print("Це приклад роботи простого маркера, який швидко закінчиться.");
+
+    let refillable = new RefillableMarker("red", 5);
+    refillable.print("Текст перед заправкою.");
+    refillable.refill();
+    refillable.print("Тепер після заправки маркер знову пише нормально!");
+  </script>
+</body>
+</html>
