@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Розкривні блоки інформації</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    .block {
+      border: 1px solid #666;
+      margin-bottom: 10px;
+    }
+    .title {
+      background-color: #a5c9ff;
+      padding: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .content {
+      display: none;
+      padding: 10px;
+      background-color: #e6f0ff;
+    }
+  </style>
+</head>
+<body>
+
+  
+
+  <div class="block">
+    <div class="title">Що таке Lorem Ipsum?</div>
+    <div class="content">
+      Lorem Ipsum — це текст-заповнювач, який використовується в друкарстві та веб-дизайні.
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="title">Звідки він походить?</div>
+    <div class="content">
+      Він з'явився у XVI столітті і використовується для демонстрації шрифтів.
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="title">Де його можна отримати?</div>
+    <div class="content">
+      Є багато онлайн-генераторів Lorem Ipsum текстів для прикладів верстки.
+    </div>
+  </div>
+
+  <script>
+    const titles = document.querySelectorAll('.title');
+
+    titles.forEach(title => {
+      title.addEventListener('click', () => {
+        // Ховаємо всі інші блоки
+        document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
+        // Відкриваємо лише поточний
+        const content = title.nextElementSibling;
+        content.style.display = 'block';
+      });
+    });
+  </script>
+
+</body>
+</html>
