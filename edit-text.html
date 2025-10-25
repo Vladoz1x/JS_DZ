@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Редагування тексту</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
+    }
+    p {
+      color: #444;
+    }
+    #textBlock, #textArea {
+      width: 600px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #fff8ef;
+      min-height: 100px;
+      font-size: 16px;
+      white-space: pre-wrap;
+    }
+    #textArea {
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Завдання 1</h2>
+  <p>Натисніть <b>Ctrl + Q</b> — щоб редагувати текст.</p>
+  <p>Натисніть <b>Ctrl + S</b> — щоб зберегти зміни.</p>
+
+  <div id="textBlock">
+    Lorem Ipsum — це текст-заповнювач, який використовується в поліграфії та веб-дизайні з XVI століття. 
+    Він служить для демонстрації вигляду тексту без змістового навантаження.
+  </div>
+
+  <script>
+    const textBlock = document.getElementById('textBlock');
+    let textArea = null;
+
+    document.addEventListener('keydown', function(event) {
+      if (event.ctrlKey && event.key.toLowerCase() === 'q') {
+        event.preventDefault(); 
+
+        if (!textArea) {
+          const currentText = textBlock.innerText;
+          textArea = document.createElement('textarea');
+          textArea.id = 'textArea';
+          textArea.value = currentText;
+          textBlock.replaceWith(textArea);
+          textArea.focus();
+        }
+      }
+
+      if (event.ctrlKey && event.key.toLowerCase() === 's') {
+        event.preventDefault();
+
+        if (textArea) {
+          const newText = textArea.value;
+          const newDiv = document.createElement('div');
+          newDiv.id = 'textBlock';
+          newDiv.textContent = newText;
+          newDiv.style.width = '600px';
+          newDiv.style.padding = '10px';
+          newDiv.style.border = '1px solid #ccc';
+          newDiv.style.backgroundColor = '#fff8ef';
+          newDiv.style.minHeight = '100px';
+          newDiv.style.fontSize = '16px';
+          newDiv.style.whiteSpace = 'pre-wrap';
+
+          textArea.replaceWith(newDiv);
+          textArea = null;
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

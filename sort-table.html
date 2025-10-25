@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Сортування таблиці</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 500px;
+    }
+    th, td {
+      border: 1px solid #999;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      cursor: pointer;
+    }
+    th:hover {
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+
+  <p>Натисніть на заголовок колонки, щоб відсортувати дані.</p>
+
+  <table id="peopleTable">
+    <thead>
+      <tr>
+        <th>Ім’я</th>
+        <th>Прізвище</th>
+        <th>Вік</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Іван</td><td>Петренко</td><td>28</td></tr>
+      <tr><td>Оксана</td><td>Шевченко</td><td>22</td></tr>
+      <tr><td>Андрій</td><td>Коваль</td><td>35</td></tr>
+      <tr><td>Марія</td><td>Іваненко</td><td>19</td></tr>
+      <tr><td>Сергій</td><td>Бондар</td><td>30</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    const table = document.getElementById('peopleTable');
+    const headers = table.querySelectorAll('th');
+    let sortDirection = 1; 
+
+    headers.forEach((header, columnIndex) => {
+      header.addEventListener('click', () => {
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        rows.sort((rowA, rowB) => {
+          let cellA = rowA.children[columnIndex].innerText.trim();
+          let cellB = rowB.children[columnIndex].innerText.trim();
+
+          const numA = parseFloat(cellA);
+          const numB = parseFloat(cellB);
+          if (!isNaN(numA) && !isNaN(numB)) {
+            return (numA - numB) * sortDirection;
+          }
+
+          return cellA.localeCompare(cellB) * sortDirection;
+        });
+
+        sortDirection *= -1;
+
+        tbody.innerHTML = '';
+        rows.forEach(row => tbody.appendChild(row));
+      });
+    });
+  </script>
+
+</body>
+</html>
