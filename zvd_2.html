@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>4 блоки </title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
+
+    .main {
+      display: flex;
+      height: 100%;
+      width: 100%;
+    }
+
+    .left, .right {
+      display: flex;
+      flex-direction: column;
+      transition: width 0.3s;
+    }
+
+    .left {
+      width: 200px;
+    }
+
+    .right {
+      flex: 1;
+    }
+
+    .block {
+      min-height: 100px;
+    }
+
+    .left .top { background: lightblue; flex: 1; }
+    .left .bottom { background: pink; flex: 1; }
+
+    .right .top { background: teal; flex: 2; }
+    .right .bottom { background: peachpuff; flex: 1; }
+
+    .slider {
+      background: #ccc;
+      height: 10px;
+      cursor: row-resize;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      left: 200px;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      background: #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      user-select: none;
+      z-index: 10;
+      transition: left 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div class="arrow" id="toggleArrow">←</div>
+
+  <div class="main">
+    <div class="left" id="leftSide">
+      <div class="block top" id="leftTop"></div>
+      <div class="slider" id="sliderLeft"></div>
+      <div class="block bottom" id="leftBottom"></div>
+    </div>
+
+    <div class="right">
+      <div class="block top" id="rightTop"></div>
+      <div class="slider" id="sliderRight"></div>
+      <div class="block bottom" id="rightBottom"></div>
+    </div>
+  </div>
+
+  <script>
+    let draggingLeft = false
+    let draggingRight = false
+
+    document.getElementById('sliderLeft').addEventListener('mousedown', () => draggingLeft = true)
+    document.getElementById('sliderRight').addEventListener('mousedown', () => draggingRight = true)
+
+    document.addEventListener('mouseup', () => {
+      draggingLeft = false
+      draggingRight = false
+    })
+
+    document.addEventListener('mousemove', (e) => {
+      let y = e.clientY
+      let min = 100
+      let max = window.innerHeight - min
+
+      if (draggingLeft) {
+        if (y < min) y = min
+        if (y > max) y = max
+        document.getElementById('leftTop').style.flex = 'none'
+        document.getElementById('leftBottom').style.flex = 'none'
+        document.getElementById('leftTop').style.height = y + 'px'
+        document.getElementById('leftBottom').style.height = (window.innerHeight - y - 10) + 'px'
+      }
+
+      if (draggingRight) {
+        if (y < min) y = min
+        if (y > max) y = max
+        document.getElementById('rightTop').style.flex = 'none'
+        document.getElementById('rightBottom').style.flex = 'none'
+        document.getElementById('rightTop').style.height = y + 'px'
+        document.getElementById('rightBottom').style.height = (window.innerHeight - y - 10) + 'px'
+      }
+    })
+
+    let hidden = false
+    let arrow = document.getElementById('toggleArrow')
+    let leftSide = document.getElementById('leftSide')
+
+    arrow.onclick = () => {
+      if (!hidden) {
+        leftSide.style.width = '0px'
+        arrow.textContent = '→'
+        arrow.style.left = '0px'
+        hidden = true
+      } else {
+        leftSide.style.width = '200px'
+        arrow.textContent = '←'
+        arrow.style.left = '200px'
+        hidden = false
+      }
+    }
+  </script>
+</body>
+</html>
