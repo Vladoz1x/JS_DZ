@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Реєстрація</title>
+  <style>
+    body {
+      background: #f0f0f0;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #ccc;
+      width: 300px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      box-sizing: border-box;
+    }
+    button {
+      background: #007acc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Реєстрація</h2>
+    <input type="text" id="email" placeholder="Email">
+    <div id="emailError" class="error"></div>
+
+    <input type="password" id="password" placeholder="Пароль">
+    <div id="passwordError" class="error"></div>
+
+    <input type="password" id="repeat" placeholder="Повторіть пароль">
+    <div id="repeatError" class="error"></div>
+
+    <button id="signup">Зареєструватися</button>
+  </div>
+
+  <script>
+    let email = document.getElementById('email')
+    let password = document.getElementById('password')
+    let repeat = document.getElementById('repeat')
+    let signup = document.getElementById('signup')
+
+    if (localStorage.getItem('email')) {
+      email.value = localStorage.getItem('email')
+      password.value = localStorage.getItem('password')
+      repeat.value = localStorage.getItem('password')
+    }
+
+    signup.onclick = () => {
+      let emailVal = email.value.trim()
+      let passVal = password.value.trim()
+      let repeatVal = repeat.value.trim()
+
+      let emailOk = /^[a-zA-Z._-]+@[a-zA-Z]+\.[a-zA-Z]{3,}$/.test(emailVal)
+      let passOk = /^[a-zA-Z0-9]+$/.test(passVal) &&
+                   /[a-z]/.test(passVal) &&
+                   /[A-Z]/.test(passVal) &&
+                   /\d/.test(passVal)
+      let match = passVal === repeatVal
+
+      document.getElementById('emailError').textContent = emailOk ? '' : 'Неправильна адреса'
+      document.getElementById('passwordError').textContent = passOk ? '' : 'Пароль має містити великі, малі літери і цифру'
+      document.getElementById('repeatError').textContent = match ? '' : 'Паролі не співпадають'
+
+      if (emailOk && passOk && match) {
+        localStorage.setItem('email', emailVal)
+        localStorage.setItem('password', passVal)
+        location.href = 'info.html'
+      }
+    }
+  </script>
+</body>
+</html>

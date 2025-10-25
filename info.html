@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Інформація</title>
+  <style>
+    body {
+      background: #f0f0f0;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #ccc;
+      width: 300px;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    a {
+      float: right;
+      font-size: 14px;
+      color: #007acc;
+      text-decoration: none;
+      margin-bottom: 10px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      box-sizing: border-box;
+    }
+    button {
+      background: #007acc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Привіт, <span id="userEmail"></span>!</h2>
+    <a href="#" id="exit">Вийти</a>
+
+    <input type="text" id="name" placeholder="Ім’я">
+    <div id="nameError" class="error"></div>
+
+    <input type="text" id="surname" placeholder="Прізвище">
+    <div id="surnameError" class="error"></div>
+
+    <input type="number" id="year" placeholder="Рік народження">
+    <div id="yearError" class="error"></div>
+
+    <select id="gender">
+      <option value="чоловік">чоловік</option>
+      <option value="жінка">жінка</option>
+    </select>
+
+    <input type="text" id="phone" placeholder="Номер телефону">
+    <div id="phoneError" class="error"></div>
+
+    <input type="text" id="skype" placeholder="Skype">
+    <div id="skypeError" class="error"></div>
+
+    <button id="save">Зберегти</button>
+  </div>
+
+  <script>
+    if (!localStorage.getItem('email')) {
+      location.href = 'index.html'
+    }
+
+    document.getElementById('userEmail').textContent = localStorage.getItem('email')
+    document.getElementById('exit').onclick = () => {
+      localStorage.clear()
+      location.href = 'index.html'
+    }
+
+    let name = document.getElementById('name')
+    let surname = document.getElementById('surname')
+    let year = document.getElementById('year')
+    let gender = document.getElementById('gender')
+    let phone = document.getElementById('phone')
+    let skype = document.getElementById('skype')
+
+    if (localStorage.getItem('name')) name.value = localStorage.getItem('name')
+    if (localStorage.getItem('surname')) surname.value = localStorage.getItem('surname')
+    if (localStorage.getItem('year')) year.value = localStorage.getItem('year')
+    if (localStorage.getItem('gender')) gender.value = localStorage.getItem('gender')
+    if (localStorage.getItem('phone')) phone.value = localStorage.getItem('phone')
+    if (localStorage.getItem('skype')) skype.value = localStorage.getItem('skype')
+
+    document.getElementById('save').onclick = () => {
+      let nameVal = name.value.trim()
+      let surnameVal = surname.value.trim()
+      let yearVal = parseInt(year.value)
+      let phoneVal = phone.value.trim()
+      let skypeVal = skype.value.trim()
+
+      let nameOk = /^[a-zA-Zа-яА-Я]{1,20}$/.test(nameVal)
+      let surnameOk = /^[a-zA-Zа-яА-Я]{1,20}$/.test(surnameVal)
+      let yearOk = yearVal >= 1900 && yearVal <= new Date().getFullYear()
+      let phoneOk = phoneVal === '' || (phoneVal.replace(/\D/g, '').length >= 10 && phoneVal.replace(/\D/g, '').length <= 12)
+      let skypeOk = skypeVal === '' || /^[a-zA-Z0-9.-]*$/.test(skypeVal)
+
+      document.getElementById('nameError').textContent = nameOk ? '' : 'Ім’я некоректне'
+      document.getElementById('surnameError').textContent = surnameOk ? '' : 'Прізвище некоректне'
+      document.getElementById('yearError').textContent = yearOk ? '' : 'Рік некоректний'
+      document.getElementById('phoneError').textContent = phoneOk ? '' : 'Телефон некоректний'
+      document.getElementById('skypeError').textContent = skypeOk ? '' : 'Skype некоректний'
+
+      if (nameOk && surnameOk && yearOk && phoneOk && skypeOk) {
+        localStorage.setItem('name', nameVal)
+        localStorage.setItem('surname', surnameVal)
+        localStorage.setItem('year', yearVal)
+        localStorage.setItem('gender', gender.value)
+        localStorage.setItem('phone', phoneVal)
+        localStorage.setItem('skype', skypeVal)
+        alert('Дані збережено')
+      }
+    }
+  </script>
+</body>
+</html>
