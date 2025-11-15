@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Search</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+        h1 { margin-bottom: 20px; }
+        .form { display: flex; gap: 10px; margin-bottom: 20px; }
+        input, select, button { padding: 8px; font-size: 14px; }
+        .results { display: flex; flex-wrap: wrap; gap: 16px; }
+        .movie { background: white; border: 1px solid #ccc; padding: 10px; width: 180px; }
+        .movie img { width: 100%; height: 260px; object-fit: cover; background: #eee; }
+        .movie-title { font-weight: bold; margin: 8px 0; }
+        .pagination { margin-top: 20px; display: flex; gap: 6px; flex-wrap: wrap; }
+        .pagination button { padding: 6px 10px; }
+        .details { margin-top: 30px; padding: 20px; background: #fff; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Search</h1>
+    <div class="form">
+        <input id="title" type="text" placeholder="Enter movie title" />
+        <select id="type">
+            <option value="">Any</option>
+            <option value="movie">Movie</option>
+            <option value="series">Series</option>
+            <option value="episode">Episode</option>
+        </select>
+        <button onclick="searchMovies(1)">Search</button>
+    </div>
+
+    <div id="results" class="results"></div>
+    <div id="pagination" class="pagination"></div>
+    <div id="details" class="details"></div>
+
+    <script>
+        const API_KEY = '2ded05c8'
+        let lastSearch = { title: '', type: '', totalPages: 0 }
+
+        function searchMovies(page) {
+            const title = document.getElementById('title').value.trim()
+            const type = document.getElementById('type').value
+            if (!title) return
+
+            lastSearch.title = title
+            lastSearch.type = type
+
+            let url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(title)}&page=${page}`
+            if (type) url += `&type=${type}`
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const resultsBox = document.getElementById('results')
+                    const paginationBox = document.getElementById('pagination')
+                    const detailsBox = document.getElementById('details')
+                    resultsBox.innerHTML = ''
+                    paginationBox.innerHTML = ''
+                    detailsBox.innerHTML = ''
+
+                    if (data.Response === 'False') {
+                        resultsBox.innerHTML = '<div>Movie not found!</div>'
+                        return
+                    }
+
+                    data.Search.forEach(movie => {
+                        const div = document.createElement('div')
+                        div.className = 'movie'
+                        div.innerHTML = `
+                            <img src="${movie.Poster !== 'N/A' ? movie.Poster : ''}" alt="Poster">
+                            <div class="movie-title">${movie.Title} (${movie.Year})</div>
+                            <button onclick="loadDetails('${movie.imdbID}')">Details</button>
+                        `
+                        resultsBox.appendChild(div)
+                    })
+
+                    const total = parseInt(data.totalResults)
+                    const totalPages = Math.ceil(total / 10)
+                    lastSearch.totalPages = totalPages
+
+                    for (let i = 1; i <= totalPages && i <= 5; i++) {
+                        const btn = document.createElement('button')
+                        btn.textContent = i
+                        btn.onclick = () => searchMovies(i)
+                        paginationBox.appendChild(btn)
+                    }
+                })
+        }
+
+        function loadDetails(id) {
+            const url = `https://www.omdbapi.com/?apikey=${API_KEY}&i=${id}&plot=full`
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const box = document.getElementById('details')
+                    box.innerHTML = `
+                        <h2>${data.Title}</h2>
+                        <div><b>Released:</b> ${data.Released}</div>
+                        <div><b>Genre:</b> ${data.Genre}</div>
+                        <div><b>Country:</b> ${data.Country}</div>
+                        <div><b>Director:</b> ${data.Director}</div>
+                        <div><b>Writers:</b> ${data.Writer}</div>
+                        <div><b>Actors:</b> ${data.Actors}</div>
+                        <div><b>Awards:</b> ${data.Awards}</div>
+                        <div><b>Plot:</b> ${data.Plot}</div>
+                    `
+                })
+        }
+    </script>
+</body>
+</html>
