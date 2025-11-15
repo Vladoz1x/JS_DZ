@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Каталог копирайтеров</title>
+    <style>
+        body { font-family: system-ui, Arial; margin: 20px; }
+        h2 { margin: 16px 0 8px; }
+        .users { display: flex; flex-wrap: wrap; gap: 8px; }
+        .users button { padding: 8px 12px; cursor: pointer; }
+        .info { margin-top: 16px; }
+        .posts { margin-top: 16px; }
+        .post { border: 1px solid #ddd; padding: 10px; margin-bottom: 8px; }
+        .post h4 { margin: 0 0 6px; font-size: 14px; }
+        .muted { color: #666; }
+    </style>
+</head>
+<body>
+    <h1>Каталог копирайтеров</h1>
+
+    <h2>All users:</h2>
+    <div class="users" id="users"></div>
+
+    <div class="info" id="info"></div>
+    <button id="showPosts" style="display:none">Show posts</button>
+
+    <div class="posts" id="posts"></div>
+
+    <script>
+        class User {
+            constructor(id, name, username, email, address, phone, website) {
+                this.id = id
+                this.name = name
+                this.username = username
+                this.email = email
+                this.address = address
+                this.phone = phone
+                this.website = website
+            }
+        }
+
+        const users = []
+        let selectedUserId = null
+
+        function renderUsers(list) {
+            const container = document.getElementById('users')
+            container.innerHTML = ''
+            list.forEach(u => {
+                const b = document.createElement('button')
+                b.textContent = u.name
+                b.onclick = () => selectUser(u.id)
+                container.appendChild(b)
+            })
+        }
+
+        function selectUser(id) {
+            selectedUserId = id
+            document.getElementById('posts').innerHTML = ''
+            document.getElementById('showPosts').style.display = 'inline-block'
+            fetch(`https://jsonplaceholder.typicode.com/users/${id}`)
+                .then(r => r.json())
+                .then(u => {
+                    const city = u.address?.city || ''
+                    const street = u.address?.street || ''
+                    const suite = u.address?.suite || ''
+                    const addressText = [city, street, suite].filter(Boolean).join(', ')
+                    const info = document.getElementById('info')
+                    info.innerHTML = `
+                        <h2>User info:</h2>
+                        <div><b>Name:</b> ${u.name}</div>
+                        <div><b>Username:</b> ${u.username}</div>
+                        <div><b>Address:</b> ${addressText || '<span class="muted">n/a</span>'}</div>
+                        <div><b>Email:</b> ${u.email}</div>
+                        <div><b>Phone:</b> ${u.phone}</div>
+                        <div><b>Website:</b> ${u.website}
+                    `
+                })
+        }
+
+        function loadPosts() {
+            if (!selectedUserId) return
+            const postsBox = document.getElementById('posts')
+            postsBox.innerHTML = '<h2>User\'s posts:</h2>'
+            fetch(`https://jsonplaceholder.typicode.com/posts?userId=${selectedUserId}`)
+                .then(r => r.json())
+                .then(posts => {
+                    posts.forEach(p => {
+                        const div = document.createElement('div')
+                        div.className = 'post'
+                        div.innerHTML = `
+                            <h4>Title: ${p.title}</h4>
+                            <div>Body: ${p.body}</div>
+                        `
+                        postsBox.appendChild(div)
+                    })
+                })
+        }
+
+        document.getElementById('showPosts').onclick = loadPosts
+
+        fetch('https://jsonplaceholder.typicode.com/users')
+            .then(r => r.json())
+            .then(data => {
+                data.forEach(u => {
+                    users.push(new User(
+                        u.id, u.name, u.username, u.email, u.address, u.phone, u.website
+                    ))
+                })
+                renderUsers(users)
+            })
+    </script>
+</body>
+</html>

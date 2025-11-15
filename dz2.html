@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Каталог копирайтеров</title>
+</head>
+<body>
+    <h1>Каталог копирайтеров</h1>
+    <ul id="list"></ul>
+
+    <script>
+        class User {
+            constructor(id, name, username, email) {
+                this.id = id
+                this.name = name
+                this.username = username
+                this.email = email
+            }
+        }
+
+        const users = []
+
+        fetch('https://jsonplaceholder.typicode.com/users')
+            .then(r => r.json())
+            .then(data => {
+                data.forEach(u => users.push(new User(u.id, u.name, u.username, u.email)))
+                const list = document.getElementById('list')
+                users.forEach(u => {
+                    const li = document.createElement('li')
+                    li.textContent = u.name
+                    list.appendChild(li)
+                })
+            })
+    </script>
+</body>
+</html>
